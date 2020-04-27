@@ -138,7 +138,7 @@ function setup() {
   hpPots = 1;
   mpPots = 1;
   damage = 1;
-  xp = 8;
+  xp = 0 ;
   xpReq = 10;
   curMP = 2;
   maxMP = 2;
@@ -1146,6 +1146,30 @@ function combatScene(){
           initCombat = false;
         }
         image(square,250, 100);
+        break;
+        case 3:
+        enemyDamage = 5;
+        if(initCombat){
+          enemyHP = 20;
+          enemy1HP = enemyHP;
+          enemy2HP = -1;
+          enemy3HP = -1;
+          initCombat = false;
+        }
+        image(pentagon, 250,100);
+        break;
+        default:
+        enemyDamage = 5;
+        if(initCombat){
+          enemyHP = 20;
+          enemy1HP = enemyHP;
+          enemy2HP = -1;
+          enemy3HP = -1;
+          initCombat = false;
+        }
+        image(pentagon, 250,100);
+        break;
+
       }
       fill(255,0,0);
       rect(180,180,130,10);
@@ -1171,7 +1195,7 @@ function combatScene(){
     case 10:
       if(initCombat){
         enemy1HP = 30
-        enemyHP = 30;
+        enemyHP = 50;
         enemy2HP = -1;
         enemy3HP = -1;
         enemyDamage = 7;
@@ -1423,6 +1447,7 @@ function newDay(){
 
 function victoryScene(){
   background(255);
+  combatSelect = 0;
   let xpGain;
   let moneyGain;
   if(combatType = 1){
