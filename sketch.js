@@ -11,6 +11,7 @@ let square;
 let pentagon;
 let coin;
 let sadplayer;
+let victory;
 
 //Overworld stuff
 let overworldX;
@@ -86,6 +87,9 @@ let combatNum;
 let font;
 let curTime;
 
+let cheatCode;
+let cheatSelect;
+
 function preload(){
   boss = loadImage('assets/images/boss.png');
   villageIcon = loadImage('assets/images/village.png');
@@ -106,6 +110,7 @@ function preload(){
 
   coin = loadImage('assets/images/coin.png');
   sadplayer = loadImage('assets/images/sadplayer.png');
+  victory = loadImage('assets/images/victory.png')
 
 
 }
@@ -140,7 +145,7 @@ function setup() {
   learnedAttacks = 1;
   learnedSpells = 1;
 
-
+  cheatSelect = 0;
   //village
   villageSelect = -1;
   insideSelect = -1;
@@ -163,13 +168,108 @@ function setup() {
   initCombat = false;
 
   enemyHP = 5;
-}
 
+  cheatCode = [];
+}
+function cheatCheck(){
+  let x = [3,3,4,4,1,2,1,2,5,6];
+  let i;
+  let matches = true;
+  if(x.length == cheatCode.length){
+    for(i = 0; i < cheatCode.length; ++i){
+      if(cheatCode[i] != x[i]){
+        matches = false;
+      }
+    }
+  } else {
+    matches = false;
+  }
+  for(i = 0;i < cheatCode.length; ++i){
+    cheatCode.pop();
+  }
+  if(matches){
+    sceneNumber = 55;
+  }
+}
 function cheatMenu(){
-  
+  background(255);
+  fill(0);
+  if(cheatSelect == 0){
+    fill(255,0,0);
+  }
+  text("Add level", 10,50);
+  fill(0);
+  if(cheatSelect == 1){
+    fill(255,0,0);
+  }
+  text("Add damage",150,50)
+  fill(0);
+  if(cheatSelect == 2){
+    fill(255,0,0);
+  }
+  text("Add maxHP", 300,50);
+  fill(0);
+  if(cheatSelect == 3){
+    fill(255,0,0);
+  }
+  text("Add maxMP",10,150);
+  fill(0);
+  if(cheatSelect == 4){
+    fill(255,0,0);
+  }
+  text("Add Money", 150,150);
+  fill(0);
+  if(cheatSelect == 5){
+    fill(255,0,0);
+  }
+  text("Return to overworld", 10, 300);
+  playerInfo();
 }
 
-
+function cheatKey(){
+  switch(keyCode){
+    case RIGHT_ARROW:
+    if(cheatSelect < 5){
+      cheatSelect++;
+    }
+    break;
+    case LEFT_ARROW:
+    if(cheatSelect > 0){
+      cheatSelect--;
+    }
+    break;
+    case 32:
+      switch(cheatSelect){
+        case 0:
+        level++;
+        xp = 0;
+        maxHP += 5;
+        curHP = maxHP;
+        maxMP++;
+        damage++;
+        curMP = maxMP;
+        learnedSpells++;
+        learnedAttacks++;
+        break;
+        case 1:
+        damage++
+        break;
+        case 2:
+        maxHP++;
+        break;
+        case 3:
+        maxMP++;
+        break;
+        case 4:
+        money++;
+        break;
+        case 5:
+        sceneNumber = 1;
+        break;
+      }
+    break;
+  }
+}
 
 function draw() {
 
@@ -217,6 +317,7 @@ function draw() {
       sleep(1000);
       playerInfo();
       sceneNumber = 10;
+      break;
     case 27:
       mpShop();
       break;
@@ -238,11 +339,15 @@ function draw() {
       break;
     case 34:
       sleep(1500);
+      console.log("Combat check" + checkCombat() + " " + combatType);
       if(checkCombat() == 1){
         sceneNumber = 50;
       }
       else if(checkCombat() == 2){
-        sceneNumber = 51;
+        if(combatType == 10){
+          sceneNumber = 60;
+        }
+        else{sceneNumber = 51;}
       } else {
         sceneNumber = 30;
       }
@@ -282,12 +387,24 @@ function draw() {
       sleep(1500);
       sceneNumber = 1;
       break;
+    case 55:
+      cheatMenu();
+      break;
+    case 60:
+      wonGame();
+      break;
     default:
       break;
+
 
   }
 }
 
+function wonGame(){
+  background(255);
+  image(victory, 300,300);
+  text("You've defeated the evil\nDodecahedron!", 20,100);
+}
 function gameOver(){
   background(255);
   text("You died!\n\nGame over.", 100,100);
@@ -429,6 +546,9 @@ function keyPressed(){
     case 30:
       combatKey();
       break;
+    case 55:
+      cheatKey();
+      break;
   }
 }
 
@@ -485,24 +605,28 @@ function playerInfo(){
 function overworldKey(){
   switch(keyCode){
     case LEFT_ARROW:
+    cheatCode.push(1);
       if(overworldX == 0){
         break;
       }
       overworldX = overworldX - 1;
       break;
     case RIGHT_ARROW:
+    cheatCode.push(2);
       if(overworldX == 3){
         break;
       }
       overworldX = overworldX + 1;
       break;
     case UP_ARROW:
+    cheatCode.push(3);
       if(overworldY == 0){
         break;
       }
       overworldY -= 1;
       break;
     case DOWN_ARROW:
+    cheatCode.push(4);
       if(overworldY == 3){
         break;
       }
@@ -512,6 +636,17 @@ function overworldKey(){
     case 32:
       overworldInteract();
       break;
+    case 66:
+    cheatCode.push(5);
+    break;
+    case 65:
+    cheatCode.push(6);
+    break;
+    case 13:
+    console.log(cheatCode)
+    cheatCheck();
+    cheatCode.length = 0;
+    break;
   }
 }
 function overworldEvent(){
@@ -845,6 +980,7 @@ function hpShop(){
 }
 
 function mpShop(){
+  console.log("mana")
   fill(255);
   noStroke();
   rect(0,480, 600,50);
@@ -1036,6 +1172,8 @@ function combatScene(){
       if(initCombat){
         enemy1HP = 30
         enemyHP = 30;
+        enemy2HP = -1;
+        enemy3HP = -1;
         enemyDamage = 7;
         initCombat = false;
         console.log("here");
